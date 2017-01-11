@@ -1,0 +1,291 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+ul {
+    list-style: none;
+}
+
+body, html {
+    width: 100%;
+
+}
+#login {
+    background-image: url("../image/bj2.jpg");
+    width: 850px;
+    height: 800px;
+    margin: 50px auto;
+    position: relative;
+
+}
+
+#nickname {
+    margin: 0 auto;
+    font-size: 24px;
+    font-family: "Tempus Sans ITC";
+    border: 1px solid #000;
+    background-color: rgba(255, 255, 255, 0.5);
+    color: #000066;
+    border-radius: 3px;
+}
+
+#welcome {
+    width: 850px;
+    height: 800px;
+    margin: 0 auto;
+    border-radius: 5px;
+
+}
+
+#headIcon1 {
+    width: 100%;
+    height:60%;
+    text-align: center;
+}
+
+#headIcon1 p {
+    color: #fff;
+    width: 100px;
+    height: 50px;
+    font-size: 24px;
+    font-weight: bold;
+    text-shadow: 6px 12px 3px white;;
+    transition: 1s;
+    position: absolute;
+    top: 215px;
+    left: 365px;
+
+}
+
+#headIcon1 p:hover {
+    text-shadow: 0 0 0 white;
+    color: #f0ad4e;
+}
+
+#headIcon1 img {
+    width: 100px; height: 100px;
+    display: none;
+    position: absolute;
+
+}
+
+#show1 {
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    top: 0;
+    left:50%;
+    margin-left: -100px;
+}
+.dengLv{width: 100%; text-align: center;}
+.btn {
+    width: 100px;
+    height: 50px;
+    display: inline-block;
+    line-height: 50px;
+    color: #fff;
+    border-radius: 5px;
+    background: rgba(150, 150, 200, 0.5);
+    transition: 0.5s;
+}
+
+.btn:hover {
+    transform: scale(1.2);
+    text-shadow: 0 0 5px #fff;
+    box-shadow: 0 0 5px 5px rgba(35, 50, 250, 0.5) inset, 0 0 5px 5px rgba(225, 150, 250, 0.5), 0 0 10px 10px rgba(225, 180, 150, 0.5) inset;
+}
+
+.sex {
+    width: 200px;
+    height: 100px;
+    line-height: 100px;
+    margin: 0 auto;
+    color: #fff;
+    display: none;
+}
+
+#btn {
+    width: 100px;
+    height: 30px;
+    border: none;
+    border-radius: 5px;
+}
+
+.man {
+    width: 20px;
+    height: 20px;
+}
+
+.woman {
+    width: 20px;
+    height: 20px;
+}
+
+
+
+
+section {
+    width:100%;
+    height: 100%;
+    position: relative;
+    border: 1px #ccc solid;
+}
+
+#main {
+    width: 100%;
+    height:100%;
+    position: absolute;
+    top: 0;
+    left:0;
+    background-color: rgba(255, 255, 255, 0.8);
+
+}
+
+header {
+    height: 80px;
+    background-color: rgba(55,155,255,0.5);
+    box-shadow:0 0 15px 15px rgba(100,166,255,0.9);
+}
+
+#left {
+    height: 718px;
+    width:20%;
+    float: left;
+    background-color: rgba(225,225,225,0.2);
+    overflow: hidden;
+
+}
+#right {
+    height: 718px;
+    width:20%;
+    float: right;
+    background-color: #F5F5F5;
+}
+
+#chatroom {
+    width:60%;
+    height: 718px;
+
+    float: left;
+}
+
+#messages {
+    width: 100%;
+    height: 600px;
+    background-color: #fff;
+    overflow: auto;
+
+}
+
+#txt {
+    height: 117px;
+    border-top: 1px #ccc solid;
+    width:100%;
+    background-color: #fff;
+
+}
+
+#headIcon {
+    height: 100px;
+    width:15%;
+    float: left;
+
+}
+
+#message {
+    border: 1px #ccc solid;
+    width:70%;
+    height: 80px;
+    margin: 18px auto;
+    float: left;
+
+}
+
+.box {
+    width: 100%;
+    height: 60px;
+    float: left;
+    line-height: 60px;
+}
+
+.box img {
+    width: 60px;
+    height: 60px;
+    float: left;
+}
+
+.selfMsg {
+    float: left;
+    line-height: 60px;
+    width: 100%;
+    color: red;
+}
+
+#send {
+    height: 50px;
+    width: 100px;
+    float: right;
+    background: rgba(136, 125, 6, 0.5);
+    margin-top: 50px;
+    line-height: 50px;
+    text-align: center;
+    border-radius: 3px;
+    color: #d43f3a;
+    position: relative;
+    overflow: hidden;
+    border: 0;
+}
+
+#send:hover {
+    background-color: darkblue;
+    opacity: 0.8;
+}
+
+#show {
+    width: 300px;
+    height: 400px;
+    overflow: hidden;
+}
+
+#show img {
+    width: 300px;
+    height: 420px;
+    float: right;
+    border-radius: 5px;
+
+}
+
+.loginMsg {
+    color: green;
+}
+
+.hide {
+    display: none;
+}
+
+#statistics {
+    width:100%;
+    height: 50px;
+    float: left;
+    background-color: rgba(254, 58, 2, 0.2);
+    color: #440044;
+}
+
+.statistics {
+    color: #333;
+    text-align: center;
+    line-height: 50px;
+}
+
+#gender {
+    width:100%;
+    height: 100px;
+    float: left;
+    margin: 20px;
+}
+
+.sMsg {
+    width: auto;
+    height: auto;
+    border: 1px #000066 solid;
+}

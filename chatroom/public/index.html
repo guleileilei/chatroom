@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="css/calendar.css" rel="stylesheet">
+    <link href="css/index.css" rel="stylesheet">
+    <script src="js/calendar.js"></script>
+    <script src="js/jquery-3.1.0.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        $(function () {
+
+            // 标志变量，标志用户是否已登录
+            var isLogin = false;
+
+            // 和socket服务器建立连接，获得客户端的socket对象
+            // 会发起向服务器的连接请求
+            var clientSocket = io();
+
+            // 监听服务器端发过来的消息
+            clientSocket.on("hello", function (data) {
+                alert("服务器端说：" + data);
+            });
+
+            // 客户端socket监听服务器发过来的消息
+            clientSocket.on("message", function (data) {
+                var type = data.type;   // 提交消息类型
+                // 根据消息类型，作出相应的处理
+                switch (type) {
+                    case "100": // 自己已经登入聊天室
+                        isLogin = true;
+                        showChatPanel(data);    // 显示聊天面板
+                        break;
+                    case "101": // 系统消息，有新用户进入聊天室
+                        if (isLogin) showWelcomeMsg(data);
+                        break;
+                    case "102": // 系统消息，有用户离开聊天室
+                        if (isLogin) showUserLeave(data);
+                        break;
+                    case "200": // 自身的聊天信息
+                        if (isLogin) showSelfChatMsg(data);
+                        break;
+                    case "201": // 群发的其他用户聊天信息
+                        if (isLogin) showChatMsg(data);
+                        break;
+                }
+            });
+            // 滚动窗口的函数
+            function scroll() {
+                // 有多远，滚多远
+                $("#messages").scrollTop($("#messages").prop("scrollHeight"));
+            }
+
+            // 在聊天窗口显示用户离开聊天室的消息
+            function showUserLeave(data) {
+                // 在聊天界面给出提示信息
+                var welcome = "<div class=''>[系统消息]" + data.nickname + "离开了聊天室</div>";
+
+                $("#messages").append(welcome);
+
+                scroll();   // 滚动窗口到最底部
+            }
+
+            // 在聊天窗口显示自己身的聊天信息
+            function showSelfChatMsg(data) {
+                // 在聊天界面给出提示信息
+
+
+                var welcome = "<div class='box'>"+data.pic+'说:'+ data.content + "</div>";
+
+                $("#messages").append(welcome);
+
+                 scroll();   // 滚动窗口到最底部
+
+            }
+
+            // 在聊天窗口显示其他用户的聊天信息
+            function showChatMsg(data) {
+
+                // 在聊天界面给出提示信息
+
+                var welcome ="<div class='box'>"+data.pic+'说:'+ data.content + "</div>";
+                var gen="<div class='gen'>"+data.gender+data.pic+data.nickname+"</div>";
+                $("#messages").append(welcome);
+                $("#gender").append(gen);
+
+                scroll();   // 滚动窗口到最底部
+            }
+
+            // 在聊天窗口显示欢迎新用户的消息
+            function showWelcomeMsg(data) {
+                // 在聊天界面给出提示信息
+                var welcome = "<div class='loginMsg'>[系统消息]欢迎新用户," + data.nickname + "!</div>";
+
+                $("#messages").append(welcome);
+
+                scroll();   // 滚动窗口到最底部
+            }
+
+
+
+
+            // 在聊天界面给出提示信息
+            function showChatPanel(data) {
+                // 隐藏登录界面
+                $("#login").hide();
+
+                // 显示聊天界面
+                $("section").show();
+
+                // 在聊天界面给出提示信息
+                var welcome = "<div class='loginMsg'>[系统消息]您已进入聊天室，请文明聊天!</div>";
+                var  welcome1="<div class='statistics'>当前在线人数"+parseInt(data.userList.length)+"人</div>";
+
+                var pic=$("#show1").html();
+                var gender=$(".sex").html();
+
+                $("#messages").append(welcome);
+                $("#statistics").append(welcome1);
+                $("#headIcon").append(pic);
+                $("#gender").append(gender);
+            }
+
+
+            // 响应用户登录事件
+            $("#startchat").on("click", function () {
+                // 获取用户输入的昵称
+                var nickname = $.trim($("#nickname").val());
+                var pic=$("#show1").html();
+                var gender=$(".sex").html();
+                // 对昵称进行合法性验证(格式(是否为空..),有效性) - 略
+                 if(nickname==""){
+                     alert("请输入名字");
+                   $("#cha").html().hide()
+                 }else {
+
+                     $("#cha").show();
+                 }
+                // ...
+
+                // 构造要发给服务器端的消息内容
+                var content = {
+                    type: "101",    // 代表用户登录
+                    nickname: nickname,
+                    pic:pic,
+                    gender:gender
+                };
+
+                // 发送登录信息给服务器端
+                clientSocket.send(content); // send默认发送的是"message"
+            });
+
+            // 发送聊天内容
+            $("#send").on("click", function () {
+                // 获取用户输入的聊天内容
+                var content = $.trim($("#message").val());
+
+                // 非空验证、敏感词过滤等，略
+
+                // 发送给服务器端：先构造要发送的消息结构
+                var message = {
+                    type: "201",    // 类型是公共聊天内容
+                    content: content
+                };
+                clientSocket.send(message);
+
+                // 清空输入框
+                $("#message").val("");
+            });
+
+            // 回车发送聊天内容
+            $("#message").on("keyup", function (e) {
+                // 判断是否按下了回车键
+                if (e.keyCode == 13) {
+                    $("#send").click();
+                }
+            });
+
+
+
+
+
+
+            $("#headIcon1").find("img").eq(0).show();
+            $("#headIcon1").find("img").eq(0).on("click", function (e) {
+                e.stopPropagation();
+                $("#headIcon1").find("img").eq(0).hide();
+                $("#headIcon1").find("img").eq(1).fadeToggle(500).show().animate({"left": "0","top": "300"});
+                $("#headIcon1").find("img").eq(2).fadeToggle(500).show().animate({"left": "100","top": "300"});
+                $("#headIcon1").find("img").eq(3).fadeToggle(500).show().animate({"left": "200","top": "300"});
+                $("#headIcon1").find("img").eq(4).fadeToggle(500).show().animate({"left": "300","top": "300"});
+                $("#headIcon1").find("img").eq(5).fadeToggle(500).show().animate({"left": "400","top": "300"});
+                $("#headIcon1").find("img").eq(6).fadeToggle(500).show().animate({"left": "500","top": "300"});
+                $("#headIcon1").find("img").eq(7).fadeToggle(500).show().animate({"left": "600","top": "300"});
+                $("#headIcon1").find("img").eq(8).fadeToggle(500).show().animate({"left": "700","top": "300"});
+                $("#headIcon1").find("p").show();
+            });
+
+
+            $("#headIcon1").find("img").on("click", function () {
+
+                var imgSrc=$(this).attr("src");
+                var img="<img src='"+imgSrc+"' alt=''>";
+
+                $("#show1").html(img);
+
+            });
+
+            var offOn=true;
+            $("#show1").on("click",function(){
+                if(offOn){
+                    $("#headIcon1").find("img").hide();
+                    offOn=false;
+                }else if (!offOn){
+                    $("#headIcon1").find("img").show();
+                    $("#show1 img").hide();
+                    offOn=false;
+                }
+
+
+            });
+
+
+            $("#btn").on("click",function(){
+                $("#btn").hide();
+                $(".sex").show();
+                $(".sex img").on("click",function(){
+                   if(offOn){
+                       $(this).show().siblings().hide();
+                       offOn=false;
+                   }else if(!offOn){
+                       $(this).show().siblings().show();
+                       return offOn=true;
+                   }
+
+                });
+
+            })
+
+        });
+
+    </script>
+
+
+</head>
+<body>
+<div id="login">
+    <section id="welcome">
+        <div id="show1"></div>
+       <div id="headIcon1">
+           <p>Plase Choice</p>
+           <img src="image/touxiang1.png" alt=''>
+           <img src="image/touxiang2.png" alt=''>
+           <img src="image/touxiang3.png" alt=''>
+           <img src="image/touxiang4.png" alt=''>
+           <img src="image/touxiang5.png" alt=''>
+           <img src="image/touxiang6.png" alt=''>
+           <img src="image/touxiang7.png" alt=''>
+           <img src="image/touxiang8.png" alt=''>
+           <img src="image/touxiang10.png" alt=''>
+       </div>
+
+        <div class="dengLv">
+            <input id="nickname" type="text" placeholder="昵称"/>
+            <a id="startchat" class="btn">Sign in</a><br/>
+            <button id="btn">请选择性别</button>
+           <div class="sex">
+               <img src="image/man.png">
+               <img src="image/woman.png">
+           </div>
+
+
+        </div>
+    </section>
+</div>
+<section id="cha" class="hide">
+    <div id="main">
+        <header>
+
+        </header>
+        <div id="left">
+            <div id="statistics">
+            </div>
+            <div id="gender">
+
+            </div>
+        </div>
+        <div id="chatroom">
+
+            <div id="messages">
+                <div class="box"></div>
+            </div>
+            <div id="txt">
+                <div id="headIcon"></div>
+                <input type="text" id="message" placeholder="">
+
+                <input type="button" id="send" value="Send" >
+            </div>
+        </div>
+        <div id="right">
+            <div id="show">
+                <img src="image/show1.jpg">
+                <img src="image/show4.jpg">
+                <img src="image/show5.jpg">
+                <img src="image/show6.jpg">
+            </div>
+            <div id="calendar">
+                <div id="cale" class="calendar clearfix">
+                    <h4 id="tit" class="title"></h4>
+
+                    <ul class="week">
+
+                        <li>Mon</li>
+                        <li>Tue</li>
+                        <li>Wed</li>
+                        <li>Thu</li>
+                        <li>Fri</li>
+                        <li>Sat</li>
+                        <li>Sun</li>
+
+                    </ul>
+
+                    <ul id="date_list" class="dateUl">
+                        <!--<li class="oldDay">1</li>
+                        <li class="oldDay">2</li>
+                        <li class="today">3</li>
+                        <li>4</li>
+                        <li>5</li>
+                        <li class="sun">6</li>
+                        <li class="sun">7</li>-->
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>
